@@ -2,14 +2,26 @@ import asyncio
 import discord
 from discord.ext import commands
 import os
+import toml
+from pretty_help import PrettyHelp, Navigation
 
 intents = discord.Intents.default()
 intents.members = True
 
-bot = commands.AutoShardedBot(command_prefix=commands.when_mentioned_or("test|"), description="Momento, A Multi-Purpose discord bot hosted 24/7")
+bot = commands.AutoShardedBot(command_prefix=commands.when_mentioned_or("m?"), description="Momento, A Multi-Purpose discord bot hosted 24/7", intents=intents)
+ 
+with open("config.toml") as f:
+    bot.config = toml.load(f)
 
 bot.load_extension('jishaku')
 bot.load_extension('cogs.main')
+bot.load_extension('cogs.music')
+bot.load_extension('cogs.moderation')
+
+nav = Navigation("\U000025c0\U0000fe0f", "\U000025b6\U0000fe0f")
+color = discord.Color.blue()
+
+bot.help_command = PrettyHelp(navigation=nav, color=color)
 
 
 @bot.event
@@ -19,13 +31,6 @@ async def on_shard_ready(shard_id):
 @bot.event 
 async def on_ready():
     print(f"{bot.user} is ready")
-    bot.loop = asyncio.get_event_loop
 
-
-
-
-
-
-
-TOKEN = os.environ['BOT_TOKEN']
+TOKEN = bot.config["bot"]["token"]
 bot.run(TOKEN)
