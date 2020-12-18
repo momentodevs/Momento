@@ -118,6 +118,7 @@ celerybeat.pid
 
 # Environments
 .env
+<<<<<<< HEAD
 .venv
 env/
 venv/
@@ -151,3 +152,9 @@ dmypy.json
 .prof
 env/bin/activate
 env/**
+=======
+.config.toml
+config.toml
+env
+.vscode
+>>>>>>> beccd1f2952cf80f9cb62f4d8173bae6ed5c6ce8
