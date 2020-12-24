@@ -1,2 +1,2 @@
 # Momento
-Momento is an open source gdiscord bot writen in Python with multi-purpose features 
+Momento is an open source discord bot writen in Python with multi-purpose features and purposes
