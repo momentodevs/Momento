@@ -16,25 +16,25 @@ with open("config.toml") as f:
 @client.command()
 @commands.has_permissions(administrator=True)
 async def load(context, extension):
-    client.load_extension(f'cogs.{extension}')
+    bot.load_extension(f'cogs.{extension}')
     print("loaded "f'cogs.{extension}' + "...")
 
 @client.command()
 @commands.has_permissions(administrator=True)
 async def unload(context, extension):
-    client.unload_extension(f'cogs.{extension}')
+    bot.unload_extension(f'cogs.{extension}')
     print("unloaded "f'cogs.{extension}' + "...")
 
 
 @client.command()
 @commands.has_permissions(administrator=True)
 async def reload(context, extension):
-    client.reload_extension(f'cogs.{extension}')
+    bot.reload_extension(f'cogs.{extension}')
     print("reloaded "f'cogs.{extension}' + "...")
 
 for filename in os.listdir('./cogs'):
     if filename.endswith('.py'):
-        client.load_extension(f'cogs.{filename[:-3]}')
+        bot.load_extension(f'cogs.{filename[:-3]}')
 
 
 nav = Navigation("\U000025c0\U0000fe0f", "\U000025b6\U0000fe0f")
