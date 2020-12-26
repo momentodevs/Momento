@@ -6,26 +6,6 @@ class Moderation(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
     
-    @commands.Cog.listener()
-    async def on_ready(self):
-        while True:
-            await asyncio.sleep(10)
-            with open("spam_detect.txt", "r+") as file:
-                file.truncate(0)
-    
-    async def on_message(message):
-        counter = 0
-        with open("spam_detect.txt", "r") as file:
-            for lines in file:
-                if lines.strip("\n") == str(message.author.id):
-                    couter+=1
-            
-            file.writelines(f"{str(message.author.id)}\n")
-            if counter > 5:
-                await message.guild.ban(message.author, reason="spam")
-                await asyncio.sleep(1)
-                await message.guild.unban(message.author)
-                print("spam detected")
                 
     @commands.command()
     @commands.guild_only()
