@@ -57,6 +57,7 @@ class Moderation(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
     
+                
     @commands.command()
     @commands.guild_only()
     @commands.bot_has_permissions(manage_messages=True)
