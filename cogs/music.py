@@ -1,5 +1,6 @@
 import asyncio
 from typing import Union
+import aiohttp
 import discord
 import re
 import wavelink
@@ -40,7 +41,7 @@ class MusicController:
 
             song = await self.queue.get()
             await player.play(song)
-            self.now_playing = await self.channel.send(f'Now playing: `{song}`')
+            self.now_playing = await self.bot.get_channel(self.guild_id).send(f'Now playing: `{song}`')
 
             await self.next.wait()
 
@@ -97,7 +98,7 @@ class Music(commands.Cog):
         return True
 
     @commands.guild_only()
-    @commands.command(name="connect")
+    @commands.command(name="connect", pass_context=True)
     async def connect(self, ctx, *, channel: discord.VoiceChannel=None):
         if not channel:
             try:
@@ -129,7 +130,7 @@ class Music(commands.Cog):
 
         player = self.bot.wavelink.get_player(ctx.guild.id)
         if not player.is_connected:
-            await ctx.invoke(self.connect_)
+            await ctx.invoke(self.connect)
 
         track = tracks[0]
 

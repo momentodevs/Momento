@@ -7,21 +7,30 @@ from pretty_help import PrettyHelp, Navigation
 
 intents = discord.Intents.default()
 intents.members = True
+intents.presences = True
 
 bot = commands.AutoShardedBot(command_prefix=commands.when_mentioned_or("m?"), description="Momento, A Multi-Purpose discord bot hosted 24/7", intents=intents)
  
 with open("config.toml") as f:
-    bot.config = toml.load(f)
+    bot.config = toml.load(f) # Load Config / Usable Globally
 
 bot.load_extension('jishaku')
 bot.load_extension('cogs.main')
-bot.load_extension('cogs.music')
+bot.load_extension('cogs.test-music')
 bot.load_extension('cogs.moderation')
+bot.load_extension('cogs.invite-tracker')
+import logging
 
-nav = Navigation("\U000025c0\U0000fe0f", "\U000025b6\U0000fe0f")
+logger = logging.getLogger('discord')
+logger.setLevel(logging.DEBUG)
+handler = logging.FileHandler(filename='discord.log', encoding='utf-8', mode='w')
+handler.setFormatter(logging.Formatter('%(asctime)s:%(levelname)s:%(name)s: %(message)s'))
+logger.addHandler(handler)
+
+nav = Navigation("\U000025c0\U0000fe0f", "\U000025b6\U0000fe0f") # Left And Right Arrows For Help Navigation.
 color = discord.Color.blue()
 
-bot.help_command = PrettyHelp(navigation=nav, color=color)
+bot.help_command = PrettyHelp(navigation=nav, color=color) # Initiziation Of Help Command
 
 
 @bot.event
@@ -32,5 +41,5 @@ async def on_shard_ready(shard_id):
 async def on_ready():
     print(f"{bot.user} is ready")
 
-TOKEN = bot.config["bot"]["token"]
+TOKEN = bot.config["bot"]["token"] # Load Token
 bot.run(TOKEN)
