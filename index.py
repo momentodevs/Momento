@@ -10,7 +10,7 @@ intents.members = True
 intents.presences = True
 
 bot = commands.AutoShardedBot(command_prefix=commands.when_mentioned_or("m?"), description="Momento, A Multi-Purpose discord bot hosted 24/7", intents=intents)
- 
+
 with open("config.toml") as f:
     bot.config = toml.load(f) # Load Config / Usable Globally
 
@@ -32,12 +32,11 @@ color = discord.Color.blue()
 
 bot.help_command = PrettyHelp(navigation=nav, color=color) # Initiziation Of Help Command
 
-
 @bot.event
 async def on_shard_ready(shard_id):
     print(f"Shard {shard_id} Ready!")
 
-@bot.event 
+@bot.event
 async def on_ready():
     print(f"{bot.user} is ready")
 

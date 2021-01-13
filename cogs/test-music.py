@@ -117,7 +117,7 @@ class Player(wavelink.Player):
         track = self.current
         if not track:
             return
-        
+
         channel = self.bot.get_channel(int(self.channel_id))
         qsize = self.queue.qsize()
 
@@ -131,7 +131,7 @@ class Player(wavelink.Player):
         embed.add_field(name='Requested By', value=track.requester.mention)
         embed.add_field(name='DJ', value=self.dj.mention)
         embed.add_field(name='Video URL', value=f'[Click Here!]({track.uri})')
-        
+
         return embed
 
     async def is_position_fresh(self) -> bool:
@@ -315,7 +315,7 @@ class Music(commands.Cog, wavelink.WavelinkMixin):
                 await node.destroy()
 
         nodes = {
-                'MAIN': 
+                'MAIN':
                         {'host': 'tranquil-journey-74197.herokuapp.com',
                           'port': 80,
                           'rest_uri': 'http://tranquil-journey-74197.herokuapp.com',
@@ -323,7 +323,7 @@ class Music(commands.Cog, wavelink.WavelinkMixin):
                           'identifier': 'MAIN',
                           'region': 'us_central',
                           'heartbeat': 5
-                        }        
+                        }
                 }
 
         for n in nodes.values():
@@ -332,7 +332,7 @@ class Music(commands.Cog, wavelink.WavelinkMixin):
     @wavelink.WavelinkMixin.listener()
     async def on_node_ready(self, node: wavelink.Node):
         print(f'Node {node.identifier} is ready!')
-    
+
 
     @wavelink.WavelinkMixin.listener('on_track_stuck')
     @wavelink.WavelinkMixin.listener('on_track_end')
@@ -375,9 +375,7 @@ class Music(commands.Cog, wavelink.WavelinkMixin):
     async def cog_check(self, ctx: commands.Context):
         """Cog wide check, which disallows commands in DMs."""
         if not ctx.guild:
-            await ctx.send('Music commands are not available in Private Messages.')
-            return False
-
+            return
         return True
 
     async def cog_before_invoke(self, ctx: commands.Context):
@@ -489,7 +487,7 @@ class Music(commands.Cog, wavelink.WavelinkMixin):
                     embed.add_field(name="Artist", value=activity.artist)
                     embed.add_field(name="Album", value=activity.album)
                     embed.set_footer(text="Song started at {}".format(activity.created_at.strftime("%H:%M")))
-                    await ctx.send(embed=embed)    
+                    await ctx.send(embed=embed)
 
 
     @commands.command()
@@ -760,4 +758,4 @@ class Music(commands.Cog, wavelink.WavelinkMixin):
 
 
 def setup(bot: commands.Bot):
-    bot.add_cog(Music(bot)) 
+    bot.add_cog(Music(bot))

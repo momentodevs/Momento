@@ -44,11 +44,11 @@ class CommandErrorHandler(commands.Cog):
         if isinstance(error, commands.DisabledCommand):
             await ctx.send(f'{ctx.command} has been disabled.')
 
-        elif isinstance(error, commands.NoPrivateMessage):
-            try:
-                await ctx.author.send(f'{ctx.command} can not be used in Private Messages.')
-            except discord.HTTPException:
-                pass
+        #elif isinstance(error, commands.NoPrivateMessage):
+            #try:
+                #await ctx.author.send(f'{ctx.command} can not be used in Private Messages.')
+            #except discord.HTTPException:
+                #pass
 
         # For this error example we check to see where it came from...
         elif isinstance(error, commands.BadArgument):
@@ -74,7 +74,7 @@ class CommandErrorHandler(commands.Cog):
         msg = await channel.fetch_message(ctx.message.id)
         await ctx.send(inp)
         await msg.delete()
-        
+
 
     @do_repeat.error
     async def do_repeat_handler(self, ctx, error):
