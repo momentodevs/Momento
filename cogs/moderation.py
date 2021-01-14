@@ -89,14 +89,13 @@ class Moderation(commands.Cog):
         await mute(ctx, user, reason or "treason") # uses the mute function
 
     #anti-advertisement automoderation(remove if you dont need)
-    @commands.Cog.listener()
+    @commands.command()
     async def on_message(self, message):
-        advertising = ["https://discord.gg", "http://discord.gg"]
-        for word in advertising:
-            if message.content.count(word) > 0:
-                await message.channel.purge(limit=1)
-                await message.channel.send(f"Advertising is not allowed! {message.author.mention}")
-                print(f"{message.author} said {message.content} and was moderated...")
+        urls = re.findall('http[s]?://(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*(),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+',message.content.lower())
+        if urls is not None and message.content.startswith('https://discord.gg' or 'http://discord.gg'):
+            await message.channel.purge(limit=1)
+            await message.channel.send("Links are not allowed!")
+            return
 
 def setup(bot):
     bot.add_cog(Moderation(bot))
