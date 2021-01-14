@@ -24,12 +24,12 @@ class Redeemed(commands.Converter):
 
 # Checks if there is a muted role on the server and creates one if there isn't
 async def mute(ctx, user, reason):
-    role = discord.utils.get(ctx.guild.roles, name="Muted") # retrieves muted role returns none if there isn't 
+    role = discord.utils.get(ctx.guild.roles, name="Muted") # retrieves muted role returns none if there isn't
     hell = discord.utils.get(ctx.guild.text_channels, name="hell") # retrieves channel named hell returns none if there isn't
     if not role: # checks if there is muted role
-        try: # creates muted role 
+        try: # creates muted role
             muted = await ctx.guild.create_role(name="Muted", reason="To use for muting")
-            for channel in ctx.guild.channels: # removes permission to view and send in the channels 
+            for channel in ctx.guild.channels: # removes permission to view and send in the channels
                 await channel.set_permissions(muted, send_messages=False,
                                               read_message_history=False,
                                               read_messages=False)
@@ -40,7 +40,7 @@ async def mute(ctx, user, reason):
     else:
         await user.add_roles(role) # adds already existing muted role
         await ctx.send(f"{user.mention} has been sent to hell for {reason}")
-       
+
     if not hell: # checks if there is a channel named hell
         overwrites = {ctx.guild.default_role: discord.PermissionOverwrite(read_message_history=False),
                       ctx.guild.me: discord.PermissionOverwrite(send_messages=True),
@@ -56,8 +56,8 @@ async def mute(ctx, user, reason):
 class Moderation(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
-    
-                
+
+
     @commands.command()
     @commands.guild_only()
     @commands.bot_has_permissions(manage_messages=True)
@@ -88,9 +88,14 @@ class Moderation(commands.Cog):
         """Gives them hell."""
         await mute(ctx, user, reason or "treason") # uses the mute function
 
-    
-
+    #anti-advertisement
+    @commands.command()
+    async def on_message(self, message):
+        urls = re.findall('http[s]?://(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*(),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+',message.content.lower())
+        if urls is not None and message.content.startswith('https://discord.gg' or 'http://discord.gg'):
+            await message.channel.purge(limit=1)
+            await message.channel.send("Links are not allowed!")
+            return
 
 def setup(bot):
     bot.add_cog(Moderation(bot))
-
