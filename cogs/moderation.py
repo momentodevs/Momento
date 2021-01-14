@@ -88,7 +88,7 @@ class Moderation(commands.Cog):
         """Gives them hell."""
         await mute(ctx, user, reason or "treason") # uses the mute function
 
-    #anti-advertisement automoderation(remove if you dont need)
+    #anti-advertisement
     @commands.command()
     async def on_message(self, message):
         urls = re.findall('http[s]?://(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*(),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+',message.content.lower())
