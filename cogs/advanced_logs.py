@@ -9,7 +9,7 @@ class Logging(commands.Cog):
         logger = logging.getLogger('discord')
         logger.setLevel(logging.DEBUG)
 
-        webhook = DiscordWebhook(url='URL')
+        webhook = DiscordWebhook(url='URL_HERE')
 
         # create embed object for webhook
         embed = DiscordEmbed(title='Momento Error Logs', description='', color=242424)
