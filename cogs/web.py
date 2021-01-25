@@ -14,6 +14,8 @@ class Webserver(commands.Cog):
         return "Hello, World!"
 
     @app.route("/v1")
+    def v1():
+        return "API v1"
 
 if __name__ == "__main__":
     app.run(debug=True)    

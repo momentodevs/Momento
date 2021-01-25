@@ -10,10 +10,10 @@ class Level(commands.Cog):
         self.bot = bot
 
     @commands.Cog.listener()
-    async def on_ready(self):
+    async def on_ready(self, bot):
         credentials = {"user": "USERNAME", "password": "PASSWORD", "database": "DATABSE", "host": "127.0.0.1"}
          try:
-             await bot.start(config.token)
+             await db.start(config.token)
          except KeyboardInterrupt:
              await db.close()
              await bot.logout()
