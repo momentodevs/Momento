@@ -34,10 +34,5 @@ class Crypto(commands.Cog):
             E = (x['symbol'], x['quote']['USD']['price'])
             await ctx.send(A)
 
-
-
-
-
-
 def setup(bot):
     bot.add_cog(Crypto(bot))
