@@ -10,7 +10,7 @@ class Crypto(commands.Cog):
     @commands.command()
     async def crypto(self, ctx):
         headers = {
-            'X-CMC_PRO_API_KEY' : '8f8259ec-f70f-4fca-aff8-f6638d6aa614',
+            'X-CMC_PRO_API_KEY' : crypto_token,
             'Accepts' : 'applications/json'
         }
 
