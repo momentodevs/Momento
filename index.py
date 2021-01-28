@@ -3,6 +3,7 @@ import discord
 from discord.ext import commands
 import os
 import toml
+from db import db
 from pretty_help import PrettyHelp, Navigation
 
 intents = discord.Intents.default()
