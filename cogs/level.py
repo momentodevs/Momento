@@ -107,6 +107,18 @@ class Level(commands.Cog):
                 db.execute("INSERT OR IGNORE INTO users (UserID) VALUES (?)", message.author.id)
                 db.commit()
 
+    @commands.command()
+    async def rank(self, ctx, target: Optional[Member]):
+        target = target or ctx.author
+        ids = db.column("SELECT UserID FROM users ORDER BY XP DESC")
+
+        xp, lvl = db.record(
+            "SELECT XP, Level FROM users WHERE UserID = ?", target.id
+        ) or (None, None)
+
+        if lvl is not None:
+            await context.channel.send(f"`Global Rank`\n{target.display_name} is level {lvl:,} with {xp:,} xp and is rank {ids.index(target.id)+1} of {len(ids):,} users globally.")
+
 
 def setup(client):
     bot.add_cog(Level(bot))
