@@ -13,7 +13,7 @@ from discord.ext.menus import MenuPages, ListPageSource
 from discord.ext import commands
 from db import db
 
-class Level(commands.Cog):
+class Level(Cog):
     def __init__(self, bot):
         self.bot = bot
 
@@ -25,7 +25,7 @@ class Level(commands.Cog):
     #      except KeyboardInterrupt:
     #          await db.close()
     #          await bot.logout()
-    @commands.Cog.listener()
+    @Cog.listener()
     async def on_message(self, message):
         if not message.author.bot:
             db.connect("./data/database.db")
@@ -120,5 +120,5 @@ class Level(commands.Cog):
             await context.channel.send(f"`Global Rank`\n{target.display_name} is level {lvl:,} with {xp:,} xp and is rank {ids.index(target.id)+1} of {len(ids):,} users globally.")
 
 
-def setup(client):
+def setup(bot):
     bot.add_cog(Level(bot))
