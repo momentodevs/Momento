@@ -13,6 +13,43 @@ from discord.ext.menus import MenuPages, ListPageSource
 from discord.ext import commands
 from db import db
 
+class Menu(ListPageSource):
+    def __init__(self, ctx, data):
+        self.ctx = ctx
+
+        super().__init__(data, per_page=10)
+
+    async def write_page(self, menu, offset, fields=[]):
+        offset = (menu.current_page * self.per_page) + 1
+        len_data = len(self.entries)
+
+        embed = Embed(
+            title="Leaderboard",
+            colour=self.ctx.author.colour,
+        )
+
+        embed.set_thumbnail(url=self.ctx.guild.me.avatar_url)
+        embed.set_footer(
+            text=f"{offset:,} - {min(len_data, offset+self.per_page-1):,} of {len_data:,} members."
+        )
+
+        for name, value in fields:
+            embed.add_field(name=name, value=value, inline=False)
+
+        return embed
+
+    async def format_page(self, menu, entries):
+        offset = (menu.current_page * self.per_page) + 1
+        fields = []
+        table = "\n".join(
+            f"{idx+offset}. **{self.ctx.guild.get_member(entry[0]).name}** ~ `{entry[1]}`"
+            for idx, entry in enumerate(entries)
+        )
+
+        fields.append(("Top members:", table))
+
+        return await self.write_page(menu, offset, fields)
+
 class Level(Cog):
     def __init__(self, bot):
         self.bot = bot
@@ -118,6 +155,12 @@ class Level(Cog):
 
         if lvl is not None:
             await context.channel.send(f"`Global Rank`\n{target.display_name} is level {lvl:,} with {xp:,} xp and is rank {ids.index(target.id)+1} of {len(ids):,} users globally.")
+
+    @commands.command()
+    async def leaderboard(self, ctx):
+        records = db.records("SELECT UserID, XP FROM users ORDER BY XP DESC")
+        menu = MenuPages(source=Menu(context, records), clear_reactions_after=True, timeout=100.0)
+        await menu.start(ctx)
 
 
 def setup(bot):
