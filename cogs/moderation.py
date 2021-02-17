@@ -1,6 +1,10 @@
 import discord
 import asyncio
+import re
+from better_profanity import profanity
 from discord.ext import tasks, commands, menus
+
+profanity.load_censor_words_from_file("./data/profanity.txt")
 
 class Sinner(commands.Converter):
     async def convert(self, ctx, argument):
@@ -88,14 +92,24 @@ class Moderation(commands.Cog):
         """Gives them hell."""
         await mute(ctx, user, reason or "treason") # uses the mute function
 
-    #anti-advertisement(only listens for discord links)
-    @commands.command()
+    #anti-advertisement(only listens for discord links) and profanity filter(check profanity.txt)
+        @commands.Cog.listener()
     async def on_message(self, message):
-        urls = re.findall('http[s]?://(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*(),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+',message.content.lower())
-        if urls is not None and message.content.startswith('https://discord.gg' or 'http://discord.gg'):
-            await message.channel.purge(limit=1)
-            await message.channel.send("Links are not allowed!")
-            return
+        if not message.author.bot:
+            urls = re.findall('http[s]?://(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*(),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+',message.content.lower())
+            if urls is not None and message.content.startswith('https://discord.gg' or 'http://discord.gg'):
+                await message.delete()
+                await message.channel.send("Links are not allowed!")
+                return
+
+            elif profanity.contains_profanity(message.content):
+                await message.delete()
+                await message.channel.send("Profanity in this server is not allowed!")
+
+        else:
+            pass
+
+
 
 def setup(bot):
     bot.add_cog(Moderation(bot))
