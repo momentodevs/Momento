@@ -93,7 +93,7 @@ class Moderation(commands.Cog):
         await mute(ctx, user, reason or "treason") # uses the mute function
 
     #anti-advertisement(only listens for discord links) and profanity filter(check profanity.txt)
-        @commands.Cog.listener()
+    @commands.Cog.listener()
     async def on_message(self, message):
         if not message.author.bot:
             urls = re.findall('http[s]?://(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*(),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+',message.content.lower())
