@@ -28,7 +28,7 @@ handler = logging.FileHandler(filename='discord.log', encoding='utf-8', mode='w'
 handler.setFormatter(logging.Formatter('%(asctime)s:%(levelname)s:%(name)s: %(message)s'))
 logger.addHandler(handler)
 
-nav = Navigation("\U000025c0\U0000fe0f", "\U000025b6\U0000fe0f") # Left And Right Arrows For Help Navigation.
+nav = DefaultMenu(page_left="\U000025c0\U0000fe0f", page_right="\U000025b6\U0000fe0f") # Left And Right Arrows For Help Navigation.
 color = discord.Color.blue()
 
 bot.help_command = PrettyHelp(navigation=nav, color=color) # Initiziation Of Help Command

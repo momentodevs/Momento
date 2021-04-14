@@ -11,7 +11,17 @@ from os.path import isfile
 from datetime import datetime, timedelta
 from discord.ext.menus import MenuPages, ListPageSource
 from discord.ext import commands
-from db import db
+import mysql.connector
+
+# mysql login.
+mydb = mysql.connector.connect(
+  host="localhost",
+  user="yourusername",
+  password="yourpassword"
+)
+mycursor = mydb.cursor()
+
+# print(mydb) 
 
 class Menu(ListPageSource):
     def __init__(self, ctx, data):
@@ -65,22 +75,21 @@ class Level(Cog):
     @Cog.listener()
     async def on_message(self, message):
         if not message.author.bot:
-            db.connect("./data/database.db")
-            result = db.record("SELECT UserID FROM users WHERE UserID = (?)", message.author.id)
+            result = mycursor.execute("SELECT UserID FROM users WHERE UserID = (?)", message.author.id)
             if result is not None:
-                xp, lvl, xplock = db.record("SELECT XP, Level, XPLock FROM users WHERE UserID = ?", message.author.id)
+                xp, lvl, xplock = mycursor.execute("SELECT XP, Level, XPLock FROM users WHERE UserID = ?", message.author.id)
                 if datetime.utcnow() > datetime.fromisoformat(xplock):
 
                     xp_to_add = random.randint(10, 20)
                     new_lvl = int(((xp + xp_to_add) // 42) ** 0.55)
 
-                    db.execute("UPDATE users SET XP = XP + ?, Level = ?, XPLock = ? WHERE UserID = ?",
+                    mycursor.execute("UPDATE users SET XP = XP + ?, Level = ?, XPLock = ? WHERE UserID = ?",
                         xp_to_add,
                         new_lvl,
                         (datetime.utcnow() + timedelta(seconds=50)).isoformat(),
                         message.author.id,
                     )
-                    db.commit()
+                    mydb.commit()
 
                     if new_lvl > lvl:
                         await message.channel.send(f":partying_face: {message.author.mention} has leveled up to {new_lvl:,}!")
@@ -141,25 +150,25 @@ class Level(Cog):
                     pass
 
             else:
-                db.execute("INSERT OR IGNORE INTO users (UserID) VALUES (?)", message.author.id)
-                db.commit()
+                mycursor.execute("INSERT OR IGNORE INTO users (UserID) VALUES (?)", message.author.id)
+                mydb.commit()
 
     @commands.command()
     async def rank(self, ctx, target: Optional[Member]):
         target = target or ctx.author
-        ids = db.column("SELECT UserID FROM users ORDER BY XP DESC")
+        ids = mycursor.execute("SELECT UserID FROM users ORDER BY XP DESC")
 
-        xp, lvl = db.record(
+        xp, lvl = mycursor.execute(
             "SELECT XP, Level FROM users WHERE UserID = ?", target.id
         ) or (None, None)
 
         if lvl is not None:
-            await context.channel.send(f"`Global Rank`\n{target.display_name} is level {lvl:,} with {xp:,} xp and is rank {ids.index(target.id)+1} of {len(ids):,} users globally.")
+            await ctx.channel.send(f"`Global Rank`\n{target.display_name} is level {lvl:,} with {xp:,} xp and is rank {ids.index(target.id)+1} of {len(ids):,} users globally.")
 
     @commands.command()
     async def leaderboard(self, ctx):
-        records = db.records("SELECT UserID, XP FROM users ORDER BY XP DESC")
-        menu = MenuPages(source=Menu(context, records), clear_reactions_after=True, timeout=100.0)
+        records = mycursor.execute("SELECT UserID, XP FROM users ORDER BY XP DESC")
+        menu = MenuPages(source=Menu(ctx, records), clear_reactions_after=True, timeout=100.0)
         await menu.start(ctx)
 
 

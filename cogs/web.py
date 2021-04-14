@@ -8,11 +8,12 @@ class Webserver(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-
+    @staticmethod
     @app.route("/") 
     def home():
         return "Hello, World!"
 
+    @staticmethod
     @app.route("/v1")
     def v1():
         return "API v1"

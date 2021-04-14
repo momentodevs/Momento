@@ -30,7 +30,7 @@ class Information(commands.Cog):
     @commands.command(name="about")
     async def about(self, ctx):
         '''Information about the bot'''
-        guild = ctx.message.channel.guild
+        # guild = ctx.message.channel.guild unused :(
         embed = discord.Embed(color=discord.Color.green())
         embed.title = 'Bot Info'
         embed.set_author(name=ctx.author.name, icon_url=ctx.author.avatar_url)
