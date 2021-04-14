@@ -3,8 +3,8 @@ import discord
 from discord.ext import commands
 import os
 import toml
-from db import db
-from pretty_help import PrettyHelp, Navigation
+import mysql.connector # from db import db (pfft.)
+from pretty_help import PrettyHelp, DefaultMenu # 1.3.0 replaced navigation with DefaultMenu (might as well do so.) https://pypi.org/project/discord-pretty-help/ 
 
 intents = discord.Intents.default()
 intents.members = True
