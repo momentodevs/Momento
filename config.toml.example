@@ -2,5 +2,3 @@
 token="YOUR_TOKEN_HERE"
 name = "Momento"
 description = ""
-[crypto]
-crypto_token="YOUR_TOKEN_HERE"

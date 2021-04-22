@@ -2,37 +2,18 @@ import discord
 import requests
 import json
 from discord.ext import commands
+from pycoingecko import CoinGeckoAPI # https://pypi.org/project/pycoingecko/ (docs and installation)
+cg = CoinGeckoAPI()
 
 class Crypto(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
     @commands.command()
-    async def crypto(self, ctx):
-        headers = {
-            'X-CMC_PRO_API_KEY' : crypto_token,
-            'Accepts' : 'applications/json'
-        }
-
-        params = {
-            'start' : '1',
-            'limit' : '5',
-            'convert' : 'USD'
-        }
-
-        url = 'https://pro-api.coinmarketcap.com/v1/cryptocurrency/listings/latest'
-
-        json = requests.get(url, params=params, headers=headers).json()
-
-        coins = json['data']
-
-        for x in coins:
-            A = (x['symbol'], x['quote']['USD']['price'])
-            B = (x['symbol'], x['quote']['USD']['price'])
-            C = (x['symbol'], x['quote']['USD']['price'])
-            D = (x['symbol'], x['quote']['USD']['price'])
-            E = (x['symbol'], x['quote']['USD']['price'])
-            await ctx.send(A)
+    async def crypto(self, ctx, coin):
+        price = cg.get_price(ids=coin, vs_currencies='usd')
+        price_frmat = price[coin]['usd']
+        await ctx.send(f"1 ${coin.upper()} is equal to {price_frmat:,.2f}$")
 
 def setup(bot):
     bot.add_cog(Crypto(bot))

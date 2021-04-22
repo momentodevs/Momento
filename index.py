@@ -20,6 +20,7 @@ bot.load_extension('cogs.main')
 bot.load_extension('cogs.test-music')
 bot.load_extension('cogs.moderation')
 bot.load_extension('cogs.invite-tracker')
+bot.load_extension('cogs.crypto')
 import logging
 
 logger = logging.getLogger('discord')
