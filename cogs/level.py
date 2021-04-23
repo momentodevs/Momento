@@ -11,6 +11,9 @@ from os.path import isfile
 from datetime import datetime, timedelta
 from discord.ext.menus import MenuPages, ListPageSource
 from discord.ext import commands
+from PIL import Image
+from PIL import ImageFont
+from PIL import ImageDraw
 import mysql.connector
 
 # mysql login.
@@ -170,6 +173,39 @@ class Level(Cog):
         records = mycursor.execute("SELECT UserID, XP FROM users ORDER BY XP DESC")
         menu = MenuPages(source=Menu(ctx, records), clear_reactions_after=True, timeout=100.0)
         await menu.start(ctx)
+        
+     @commands.command()
+    async def rank(self, context, target: Optional[Member]):
+        print(colored(f"[level]: {context.author} accessed rank...", "cyan"))
+        target = target or context.author
+
+        result = db.record(f"SELECT XP, Level FROM users WHERE UserID = {target.id}")
+
+        if result is not None:
+            async with context.typing():
+                await asyncio.sleep(1)
+
+                img = Image.open("./data/rank.png")
+                draw = ImageDraw.Draw(img)
+                font = ImageFont.truetype("./data/Quotable.otf", 35)
+                font1 = ImageFont.truetype("./data/Quotable.otf", 24)
+                async with aiohttp.ClientSession() as session:
+                    async with session.get(str(context.author.avatar_url)) as response:
+                        image = await response.read()
+                icon = Image.open(BytesIO(image)).convert("RGBA")
+                img.paste(icon.resize((156, 156)), (50, 60))
+                draw.text((242, 100), f"{str(result[1])}", (140, 86, 214), font=font)
+                draw.text((242, 180), f"{str(result[0])}", (140, 86, 214), font=font)
+                draw.text((50,220), f"{context.author.name}", (140, 86, 214), font=font1)
+                draw.text((50,240), f"#{context.author.discriminator}", (255, 255, 255), font=font1)
+                img.save("./data/infoimg2.png")
+                ffile = discord.File("./data/infoimg2.png")
+                await context.send(file=ffile)
+
+        else:
+            async with context.typing():
+                await asyncio.sleep(1)
+                await context.channel.send("You are not in the database :(")
 
 
 def setup(bot):
