@@ -1,5 +1,6 @@
 import discord
 import psutil
+import datetime
 import time
 from discord.ext import commands
 
@@ -14,7 +15,7 @@ class Information(commands.Cog):
     
     @commands.command(name="info")
     async def test(self, ctx):
-        await ctx.send("<@734351336677834792> is a discord bot writen in Discord.py owned and maintained by <@734301865579380819> <a:wumpuscode:771579240184545310>")
+        await ctx.send("<@734351336677834792> is a discord bot writen in Discord.py owned and maintained by <@734301865579380819>, <@616582088845688843> <a:wumpuscode:771579240184545310>")
 
 
     @commands.command(name="ping")
@@ -35,9 +36,9 @@ class Information(commands.Cog):
         embed.title = 'Bot Info'
         embed.set_author(name=ctx.author.name, icon_url=ctx.author.avatar_url)
         try:
-            embed.description = 'A multipurpose bot writen and maintained by TimmyTime#0310\n[Support Server](https://discord.gg/SQzTAGzpT9)'
+            embed.description = 'A multipurpose bot writen and maintained by TimmyTime#0310 and Mamoth112#8900\n[Support Server](https://discord.gg/SQzTAGzpT9)'
         except AttributeError:
-            embed.description = 'A multipurpose bot writen and maintained by TimmyTime#0310.\n[Support Server](https://discord.gg/SQzTAGzpT9)'
+            embed.description = 'A multipurpose bot writen and maintained by TimmyTime#0310 and Mamoth112#8900.\n[Support Server](https://discord.gg/SQzTAGzpT9)'
         embed.add_field(name="Servers", value=len(self.bot.guilds))
         embed.add_field(name='Total Users', value=len(self.bot.users))
         embed.add_field(name='Channels', value=f"{sum(1 for g in self.bot.guilds for _ in g.channels)}")
@@ -46,6 +47,14 @@ class Information(commands.Cog):
         embed.add_field(name="Invite", value=f"[Click Here](https://discordapp.com/oauth2/authorize?client_id={self.bot.user.id}&scope=bot&permissions=268905542)")
         embed.set_footer(text="Momento © 2020 | Powered by discord.py")
         await ctx.send(embed=embed)
+
+    @commands.command()
+    async def uptime(self, ctx):
+        delta_uptime = datetime.datetime.utcnow() - self.bot.launch_time
+        hours, remainder = divmod(int(delta_uptime.total_seconds()), 3600)
+        minutes, seconds = divmod(remainder, 60)
+        days, hours = divmod(hours, 24)
+        await ctx.send(f"{days}d, {hours}h, {minutes}m, {seconds}s")
 
 
     @about.error

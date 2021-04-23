@@ -21,57 +21,19 @@ mydb = mysql.connector.connect(
 )
 mycursor = mydb.cursor()
 
-# print(mydb) 
-
-class Menu(ListPageSource):
-    def __init__(self, ctx, data):
-        self.ctx = ctx
-
-        super().__init__(data, per_page=10)
-
-    async def write_page(self, menu, offset, fields=[]):
-        offset = (menu.current_page * self.per_page) + 1
-        len_data = len(self.entries)
-
-        embed = Embed(
-            title="Leaderboard",
-            colour=self.ctx.author.colour,
-        )
-
-        embed.set_thumbnail(url=self.ctx.guild.me.avatar_url)
-        embed.set_footer(
-            text=f"{offset:,} - {min(len_data, offset+self.per_page-1):,} of {len_data:,} members."
-        )
-
-        for name, value in fields:
-            embed.add_field(name=name, value=value, inline=False)
-
-        return embed
-
-    async def format_page(self, menu, entries):
-        offset = (menu.current_page * self.per_page) + 1
-        fields = []
-        table = "\n".join(
-            f"{idx+offset}. **{self.ctx.guild.get_member(entry[0]).name}** ~ `{entry[1]}`"
-            for idx, entry in enumerate(entries)
-        )
-
-        fields.append(("Top members:", table))
-
-        return await self.write_page(menu, offset, fields)
-
 class Level(Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    # @commands.Cog.listener()
-    # async def on_ready(self, bot):
-    #     credentials = {"user": "USERNAME", "password": "PASSWORD", "database": "DATABSE", "host": "127.0.0.1"}
-    #      try:
-    #          await db.start(config.token)
-    #      except KeyboardInterrupt:
-    #          await db.close()
-    #          await bot.logout()
+    @commands.Cog.listener()
+    async def on_ready(self, bot):
+        credentials = {"user": "USERNAME", "password": "PASSWORD", "database": "DATABSE", "host": "127.0.0.1"}
+         try:
+             await db.start(config.token)
+         except KeyboardInterrupt:
+             await db.close()
+             await bot.logout()
+             
     @Cog.listener()
     async def on_message(self, message):
         if not message.author.bot:

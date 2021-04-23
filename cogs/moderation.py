@@ -4,7 +4,7 @@ import re
 from better_profanity import profanity
 from discord.ext import tasks, commands, menus
 
-profanity.load_censor_words_from_file("./data/profanity.txt")
+profanity.load_censor_words()
 
 class Sinner(commands.Converter):
     async def convert(self, ctx, argument):
@@ -68,7 +68,7 @@ class Moderation(commands.Cog):
     @commands.has_permissions(manage_messages=True)
     async def clear(self, ctx, amount: int = 1):
         await ctx.channel.purge(limit=amount + 1)
-        await ctx.send(f"<:greenTick:596576670815879169> {amount} messages have been just deleted")
+        await ctx.send(f"<:greenTick:596576670815879169> {amount} messages have just been deleted")
         await asyncio.sleep(2)
         await ctx.channel.purge(limit=1)
 
@@ -94,6 +94,8 @@ class Moderation(commands.Cog):
 
     #anti-advertisement(only listens for discord links) and profanity filter(check profanity.txt)
     @commands.Cog.listener()
+    @commands.bot_has_permissions(manage_messages=True)
+    @commands.has_permissions(manage_messages=True)
     async def on_message(self, message):
         if not message.author.bot:
             urls = re.findall('http[s]?://(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*(),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+',message.content.lower())
