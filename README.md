@@ -1,5 +1,4 @@
-# Momento
-Momento is an open source discord bot writen in Python with multi-purpose features and purposes
+## Momento
 
 Momento is an open source, fully functional Discord bot that includes moderation, reaction roles, music features, and so much more. 100% CUSTOMIZABLE AND SECURE.
 See it in action for yourself at [Momento's site](http://bot.tims.software)!
