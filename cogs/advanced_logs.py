@@ -1,7 +1,8 @@
 import discord 
-from discord import commands
+from discord.ext import commands
 from discord_webhook import DiscordWebhook, DiscordEmbed
 import logging
+
 
 class Logging(commands.Cog):
     def __init__(self, bot):
@@ -9,13 +10,13 @@ class Logging(commands.Cog):
         logger = logging.getLogger('discord')
         logger.setLevel(logging.DEBUG)
 
-        webhook = DiscordWebhook(url='URL_HERE')
+        webhook = DiscordWebhook(url='https://discord.com/api/webhooks/833352619191828570/Aq7lkaVMtQ21sah_Nsa5M6g1qNF5LfGTfFNV3DvFxz3ExdtORMAaQtwNXEAa6EePfetE')
 
         # create embed object for webhook
         embed = DiscordEmbed(title='Momento Error Logs', description='', color=242424)
 
         # set author
-        embed.set_author(name='TimmyTime#0310')
+        embed.set_author(name="Momento#3720")
 
         # set image
         #embed.set_image(url='your image url')
@@ -37,3 +38,6 @@ class Logging(commands.Cog):
         webhook.add_embed(embed)
 
         response = webhook.execute()
+
+def setup(bot):
+    bot.add_cog(Logging(bot))
