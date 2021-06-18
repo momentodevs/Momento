@@ -63,3 +63,4 @@ Pull requests are welcome. For major changes, please open an issue first to disc
 Please make sure to update tests as appropriate.
 
 ![Discord Banner](https://discordapp.com/api/guilds/734397485346455572/widget.png?style=banner4)
+[JOIN](https://discord.gg/xrqSPATnBb)
