@@ -1,3 +1,4 @@
+#Run this file either by import(long) or by itself to generate ai chat model
 import json 
 import os
 import numpy as np 
@@ -10,7 +11,7 @@ from tensorflow.keras.preprocessing.text import Tokenizer
 from tensorflow.keras.preprocessing.sequence import pad_sequences
 from sklearn.preprocessing import LabelEncoder
 
-with open('./ai/intents/intents.json') as file:
+with open('./ai/intents.json') as file: #basic intents. Would store this in a database rather than here for per-server hive-mind like ai
     data = json.load(file)
     
 training_sentences = []
