@@ -1,3 +1,4 @@
+---
 # Momento
 [![CI for PRs](https://github.com/momentodevs/Momento/actions/workflows/main.yml/badge.svg?branch=main)](https://github.com/momentodevs/Momento/actions/workflows/main.yml)
 
@@ -12,42 +13,42 @@ git clone https://github.com/momentodevs/Momento.git
 python3 -m pip install -r requirements.txt
 ```
 ## Database
-With Momento you have the choice of 3 different databases to store data. You can use sqlite (file storage), MySQL (most known database) and also PostGresQL (a no SQL database thats a lot easier to understand). We recommend PostGresQL for its speed and reliability.
+With Momento you have the choice of 3 different databases to store data. You can use sqlite (file storage), MySQL (most known database) and also PostGresQL (ana SQL database thats a lot easier to understand). We recommend PostGresQL for its speed and reliability.
 ## Config
 config.yml
 
 ```yaml
 discord:
-    TOKEN:
+      TOKEN:
 
 databases:
-    default: sqlite
-    sqlite:
-      driver: sqlite
-      database: Momento\database\discord.db
-      log_queries: True
-      prefix:
-    mysql:
-      driver: mysql
-      host: 
-      database: 
-      port:
-      user: 
-      password: 
-      log_queries:
-    postgres:
-      driver: postgres
-      host:
-      database:
-      port:
-      user:
-      password:
-      log_queries:
+      default: sqlite
+      sqlite:
+        driver: sqlite
+        database: Momento\database\discord.db
+        log_queries: True
+        prefix:
+      mysql:
+        driver: mysql
+        host: 
+        database: 
+        port:
+        user: 
+        password: 
+        log_queries:
+      postgres:
+        driver: postgres
+        host:
+        database:
+        port:
+        user:
+        password:
+        log_queries:
   
 config:
-  utils:
-    bot_logging: True
-    bot_settings: True
+    utils:
+      bot_logging: True
+      bot_settings: True
     bot_utils: True
   logging_mode: 'w'
 ```
@@ -64,4 +65,6 @@ Pull requests are welcome. For major changes, please open an issue first to disc
 Please make sure to update tests as appropriate.
 
 ![Discord Banner](https://discordapp.com/api/guilds/734397485346455572/widget.png?style=banner4)
+
 [JOIN](https://discord.gg/xrqSPATnBb)
+---
