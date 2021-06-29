@@ -1,4 +1,5 @@
 # Momento
+[![CI for PRs](https://github.com/momentodevs/Momento/actions/workflows/main.yml/badge.svg?branch=main)](https://github.com/momentodevs/Momento/actions/workflows/main.yml)
 
 Momento is an opensource discord bot filled with features
 
