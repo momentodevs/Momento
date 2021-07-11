@@ -83,6 +83,7 @@ async def mute(ctx: Context, user: Member, reason):
 class Moderation(Cog):
     def __init__(self, bot: AutoShardedBot):
         self.bot = bot
+        self.bot.db = self.db
 
 
     @commands.command()

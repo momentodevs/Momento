@@ -1,3 +1,3 @@
 import Momento
 
-bot.run()
+Momento.run()

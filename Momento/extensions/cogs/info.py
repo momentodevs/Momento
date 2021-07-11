@@ -9,6 +9,7 @@ class Information(Cog):
     def __init__(self, bot: AutoShardedBot):
         """Main Commands"""
         self.bot = bot
+        self.bot.db = self.db
         self.process = psutil.Process()
 
     @commands.command(name="info")
@@ -97,6 +98,7 @@ class Information(Cog):
     @commands.command(name="metrics", hidden=True)
     async def metrics(self, ctx: Context):
         '''Shows DB Stats'''
+        db = self.bot.db
         await db.runCommand("getDatabaseStats", )
 
     @about.error

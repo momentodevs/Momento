@@ -1,70 +1,9 @@
----
-# Momento
-[![CI for PRs](https://github.com/momentodevs/Momento/actions/workflows/main.yml/badge.svg?branch=main)](https://github.com/momentodevs/Momento/actions/workflows/main.yml)
+## Momento
 
-Momento is an opensource discord bot filled with features
+Momento is an open source, fully functional Discord bot that includes moderation, reaction roles, music features, and so much more. 100% CUSTOMIZABLE AND SECURE.
+See it in action for yourself at [Momento's site](http://bot.tims.software)!
 
-## Installation
 
-Use Git clone to install momento:
-```
-git clone https://github.com/momentodevs/Momento.git
 
-python3 -m pip install -r requirements.txt
-```
-## Database
-With Momento you have the choice of 3 different databases to store data. You can use sqlite (file storage), MySQL (most known database) and also PostGresQL (ana SQL database thats a lot easier to understand). We recommend PostGresQL for its speed and reliability.
-## Config
-config.yml
-
-```yaml
-discord:
-      TOKEN:
-
-databases:
-      default: sqlite
-      sqlite:
-        driver: sqlite
-        database: Momento\database\discord.db
-        log_queries: True
-        prefix:
-      mysql:
-        driver: mysql
-        host: 
-        database: 
-        port:
-        user: 
-        password: 
-        log_queries:
-      postgres:
-        driver: postgres
-        host:
-        database:
-        port:
-        user:
-        password:
-        log_queries:
-  
-config:
-    utils:
-      bot_logging: True
-      bot_settings: True
-    bot_utils: True
-  logging_mode: 'w'
-```
-
-## Usage
-
-```python
-python3 run.py
-```
-
-## Contributing
-Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.
-
-Please make sure to update tests as appropriate.
-
-![Discord Banner](https://discordapp.com/api/guilds/734397485346455572/widget.png?style=banner4)
-
-[JOIN](https://discord.gg/xrqSPATnBb)
----
+## Join our Discord server!
+[![Join our Discord server!](https://invidget.switchblade.xyz/Z69rsfKrut)](https://discord.gg/Z69rsfKrut)
