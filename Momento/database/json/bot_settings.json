@@ -1,0 +1,15 @@
+{
+    "Bot Settings": {
+        "case_insensitive": false,
+        "command_prefix": [
+            "m?"
+        ],
+        "coowners": [
+            598625004279693460,
+            616582088845688843
+        ],
+        "description": "Momento is an open source discord bot hosted 24/7",
+        "pm_help": false
+    },
+    "traceback": false
+}

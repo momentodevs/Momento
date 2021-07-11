@@ -1,0 +1,33 @@
+discord:
+    TOKEN: NzM0MzUxMzM2Njc3ODM0Nzky.XxQb-g.rESUhdgejbmC0nuB_t-Ohgrl9Qg
+
+databases:
+    default: sqlite
+    sqlite:
+      driver: sqlite
+      database: Momento\database\discord.db
+      log_queries: True
+      prefix:
+    mysql:
+      driver: mysql
+      host: 
+      database: 
+      port:
+      user: 
+      password: 
+      log_queries:
+    postgres:
+      driver: postgres
+      host:
+      database:
+      port:
+      user:
+      password:
+      log_queries:
+  
+config:
+  utils:
+    bot_logging: True
+    bot_settings: True
+    bot_utils: True
+  logging_mode: 'w'
