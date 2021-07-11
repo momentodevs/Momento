@@ -25,10 +25,11 @@ class pcolours:
 class PlayerStatsTracker(Cog):
     def __init__(self, bot):
         self.bot = bot
-        print(self.bot.db)
+        self.bot.db = self.db
 
     @Cog.listener()
     async def on_message(self, ctx: Context):
+        db = self.bot.db
         if ctx.webhook_id:
             pass
         else:
@@ -42,6 +43,7 @@ class PlayerStatsTracker(Cog):
     @commands.cooldown(rate=1, per=3, type=commands.BucketType.user)
     async def stats(self, ctx: Context, user: Member=None):
         """Check Stats for user, If no user mention it will default to command invoker"""
+        db = self.bot.db
         if user is None:
             user = ctx.author
         userid = user.id

@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 discord:
     TOKEN: NzM0MzUxMzM2Njc3ODM0Nzky.XxQb-g.rESUhdgejbmC0nuB_t-Ohgrl9Qg
 
@@ -30,4 +31,38 @@ config:
     bot_logging: True
     bot_settings: True
     bot_utils: True
+=======
+discord:
+    TOKEN: "NzM0MzUxMzM2Njc3ODM0Nzky.XxQb-g.QFQwyk4HGCyKy6rFxDrd1U6kSWg"
+
+databases:
+    default: sqlite
+    sqlite:
+      driver: sqlite
+      database: Momento\database\discord.db
+      log_queries: True
+      prefix:
+    mysql:
+      driver: mysql
+      host: 127.0.0.1
+      database: "pterodactyl"
+      port: 5436
+      user: "pterodactyl"
+      password: 23264011215931
+      log_queries: 1
+    postgres:
+      driver: postgres
+      host: 127.0.0.1
+      database: "pterodactyl"
+      port: 5436
+      user: "pterodactyl"
+      password: "23264011215931"
+      log_queries: 1
+  
+config:
+  utils:
+    bot_logging: True
+    bot_settings: True
+    bot_utils: True
+>>>>>>> 36b6b1b06fd4a57b067bb82028d2df75bdcd986e
   logging_mode: 'w'

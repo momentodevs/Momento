@@ -25,6 +25,7 @@ class pcolours:
 class Welcomer(Cog):
     def __init__(self, bot: AutoShardedBot):
         self.bot = bot
+        self.db = self.bot.db
 
     @commands.command()
     @commands.guild_only()
@@ -33,7 +34,7 @@ class Welcomer(Cog):
         guildId = ctx.guild.id
         await ctx.send("Welcome Message can use {user_name}, {user_discriminator}, {guild_name}, {user_mention}")
         welcomeMessage = await db.runCommand('getGuildWelcomeMessage', guildId)
-        await db.runCommand('setGuildWelcomeMessage', guildId, value)
+        await self.db.runCommand('setGuildWelcomeMessage', guildId, value)
         embed = discord.Embed(title="Welcomer Settings", colour=discord.Colour(0x1e240),
                               timestamp=datetime.datetime.utcnow())
         embed.set_thumbnail(url=ctx.author.avatar_url)
@@ -56,7 +57,7 @@ class Welcomer(Cog):
             channelOld = await self.bot.fetch_channel(channelOld)
             channelOld = channelOld.name
         channelNew = channel
-        await db.runCommand('setGuildWelcomeChannel', guildId, channel.id)
+        await self.db.runCommand('setGuildWelcomeChannel', guildId, channel.id)
         embed = discord.Embed(title="Welcomer Settings", colour=Colour(0x1e240),
                               timestamp=datetime.datetime.utcnow())
         embed.set_thumbnail(url=ctx.author.avatar_url)
@@ -76,13 +77,13 @@ class Welcomer(Cog):
             yayornay = 0
         else:
             yayornay = 1
-        await db.runCommand('setGuildWelcomeEnabled', guildId, yayornay)
+        await self.db.runCommand('setGuildWelcomeEnabled', guildId, yayornay)
         enabled = await db.runCommand('getGuildWelcomeEnabled', guildId)
         if enabled[0][0] == 0:
             enabledd = "Disabled"
         else:
             enabledd  = "Enabled"
-        await db.runCommand('setGuildWelcomeEnabled', guildId, yayornay)
+        await self.db.runCommand('setGuildWelcomeEnabled', guildId, yayornay)
         embed = discord.Embed(title="Welcomer Settings", colour=Colour(0x1e240),
                               timestamp=datetime.datetime.utcnow())
         embed.set_thumbnail(url=ctx.author.avatar_url)
@@ -95,11 +96,11 @@ class Welcomer(Cog):
     @Cog.listener()
     async def on_member_join(self, member: Member):
         guildId = member.guild.id
-        enabled = await db.runCommand('getGuildWelcomeEnabled', guildId)
-        await db.runCommand('setUserBase', member.id, guildId)
+        enabled = await self.db.runCommand('getGuildWelcomeEnabled', guildId)
+        await self.db.runCommand('setUserBase', member.id, guildId)
         if enabled[0][0] == 1:
-            welcomeChannel = await db.runCommand('getGuildWelcomeChannel', guildId)
-            welcomeMessage = await db.runCommand('getGuildWelcomeMessage', guildId)
+            welcomeChannel = await self.db.runCommand('getGuildWelcomeChannel', guildId)
+            welcomeMessage = await self.db.runCommand('getGuildWelcomeMessage', guildId)
             channel = await self.bot.fetch_channel(welcomeChannel[0])
             user_name = member.display_name
             user_discriminator = member.discriminator
@@ -110,7 +111,7 @@ class Welcomer(Cog):
 
     @Cog.listener()
     async def on_member_leave(self, member: Member):
-        await db.runCommand('removeUser', member.id, member.guild.id)
+        await self.db.runCommand('removeUser', member.id, member.guild.id)
 
 
 

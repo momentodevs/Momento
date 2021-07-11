@@ -8,7 +8,11 @@
             598625004279693460,
             616582088845688843
         ],
+<<<<<<< HEAD
         "description": "Momento is an open source discord bot hosted 24/7",
+=======
+        "description": "Momento, A Multipurpose, opensource discord bot hosted 24/7",
+>>>>>>> 36b6b1b06fd4a57b067bb82028d2df75bdcd986e
         "pm_help": false
     },
     "traceback": false
