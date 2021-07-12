@@ -33,7 +33,7 @@ config:
     bot_utils: True
 =======
 discord:
-    TOKEN: "NzM0MzUxMzM2Njc3ODM0Nzky.XxQb-g.QFQwyk4HGCyKy6rFxDrd1U6kSWg"
+    TOKEN: ""
 
 databases:
     default: sqlite
@@ -48,7 +48,7 @@ databases:
       database: "pterodactyl"
       port: 5436
       user: "pterodactyl"
-      password: 23264011215931
+      password: "PASSWORD_HERE"
       log_queries: 1
     postgres:
       driver: postgres
