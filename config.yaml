@@ -1,6 +1,6 @@
 <<<<<<< HEAD
 discord:
-    TOKEN: NzM0MzUxMzM2Njc3ODM0Nzky.XxQb-g.rESUhdgejbmC0nuB_t-Ohgrl9Qg
+    TOKEN: DISCORD_BOT_TOKEN
 
 databases:
     default: sqlite
@@ -19,7 +19,7 @@ databases:
       log_queries:
     postgres:
       driver: postgres
-      host:
+      host: 
       database:
       port:
       user:
@@ -56,7 +56,7 @@ databases:
       database: "pterodactyl"
       port: 5436
       user: "pterodactyl"
-      password: "23264011215931"
+      password: "PASSWORD_HERE"
       log_queries: 1
   
 config:
