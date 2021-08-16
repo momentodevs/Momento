@@ -1,6 +1,6 @@
 import discord
 from discord.ext import commands
-
+import re
 from . import checks
 from .Bot_Logging import human
 
@@ -13,6 +13,7 @@ class Bot_Settings(commands.Cog):
     @commands.command(aliases=["sp"])
     async def set_prefix(self, ctx: commands.Context, *, prefix: str = "!"):
         """: Change the prefix for using bot commands. This will overwrite all prefixes."""
+        self.cleanStr(prefix)
         prefix = prefix.split(" ")
         self.bot.command_prefix = prefix
         self.bot.settings.data["Bot Settings"]["command_prefix"] = prefix
@@ -35,6 +36,7 @@ class Bot_Settings(commands.Cog):
     @commands.command()
     async def change_description(self, ctx: commands.Context, *, description: str = ""):
         """: Change the description for the bot displayed in the help menu"""
+        self.cleanStr(description)
         self.bot.description = description
         self.bot.settings.data["Bot Settings"]["description"] = description
         self.bot.settings.save()
@@ -99,3 +101,10 @@ class Bot_Settings(commands.Cog):
             coowners += f"{ctx.bot.get_user(coowner)}\n"
         embed = discord.Embed(title="Co-Owners", description=coowners)
         await ctx.channel.send(embed=embed)
+
+    async def cleanStr(text: str):
+        # Returns a string clean of non-utf8 characters and quote marks (" and ')
+        text = text.decode("utf8","ignore") 
+        text = text.replace("'", "") 
+        text = text.replace('"', "")
+        return text
