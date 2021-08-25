@@ -1,0 +1,15 @@
+name: Update requirements.txt
+on: [push]
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@master
+      - name: Self test
+        id: selftest
+
+        uses: ryan-rozario/pipreqs-action-cpy@master
+
+        with:
+          PROJECT_PATH: .  
+          REQUIREMENT_PATH: requirements.txt  
