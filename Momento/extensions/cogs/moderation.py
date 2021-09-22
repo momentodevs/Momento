@@ -104,7 +104,7 @@ class Moderation(Cog):
     @commands.has_permissions(manage_messages=True)
     async def on_message(self, message: Message):
         if not message.author.bot:
-            urls = re.findall('http[s]?://(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*(),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+',message.content.lower())
+            urls = re.findall('http[s]?://(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*(),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+', message.content.lower())
             if urls is not None and message.content.startswith('https://discord.gg' or 'http://discord.gg'):
                 await message.delete()
                 await message.channel.send("Links are not allowed!")

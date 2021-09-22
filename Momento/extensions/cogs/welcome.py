@@ -39,9 +39,9 @@ class Welcomer(Cog):
         guildId = ctx.guild.id
         channelOld = await db.runCommand('getGuildWelcomeChannel', guildId)
         print(channelOld)
-        if channelOld == None or channelOld == 0 or channelOld == "0" or channelOld == "None":
+        if channelOld is None or channelOld == 0 or channelOld == "0" or channelOld == "None":
             channelOld = "No Channel Specified"
-        elif channelOld != None or channelOld != "None":
+        elif channelOld is not None or channelOld != "None":
             channelOld = channelOld[0]
             print(channelOld)
             channelOld = await self.bot.fetch_channel(channelOld)
