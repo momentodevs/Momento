@@ -23,8 +23,7 @@ class Sinner(Converter):
         permission = argument.guild_permissions.manage_messages # can change into any permission
         if not permission: # checks if user has the permission
             return argument # returns user object
-        else:
-            raise commands.BadArgument("You cannot punish other staff members") # tells user that target is a staff member
+        raise commands.BadArgument("You cannot punish other staff members") # tells user that target is a staff member
 
 # Checks if you have a muted role
 class Redeemed(Converter):
@@ -33,8 +32,7 @@ class Redeemed(Converter):
         muted = discord.utils.get(ctx.guild.roles, name="Muted") # gets role object
         if muted in argument.roles: # checks if user has muted role
             return argument # returns member object if there is muted role
-        else:
-            raise commands.BadArgument("The user was not muted.") # self-explainatory
+        raise commands.BadArgument("The user was not muted.") # self-explainatory
 
 
 # Checks if there is a muted role on the server and creates one if there isn't
