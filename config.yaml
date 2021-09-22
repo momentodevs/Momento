@@ -1,6 +1,5 @@
 discord:
     TOKEN: DISCORD_BOT_TOKEN
-
 databases:
     default: sqlite
     sqlite:
@@ -10,21 +9,20 @@ databases:
       prefix:
     mysql:
       driver: mysql
-      host: 
-      database: 
-      port:
-      user: 
-      password: 
-      log_queries:
-    postgres:
-      driver: postgres
-      host: 
+      host:
       database:
       port:
       user:
       password:
       log_queries:
-  
+    postgres:
+      driver: postgres
+      host:
+      database:
+      port:
+      user:
+      password:
+      log_queries:
 config:
   utils:
     bot_logging: True
