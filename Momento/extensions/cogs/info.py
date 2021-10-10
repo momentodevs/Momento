@@ -1,9 +1,13 @@
+from datetime import datetime, time
+from discord.colour import Colour
+from discord.ext.commands.errors import BadArgument, CheckFailure, MissingRequiredArgument
 import psutil
-
 from discord.ext import commands
 from discord import Guild
 from discord.ext.commands import Cog, AutoShardedBot, Context, BucketType
 import discord
+
+
 
 class Information(Cog):
     def __init__(self, bot: AutoShardedBot):
@@ -46,7 +50,7 @@ class Information(Cog):
         embed.add_field(name="Bot Latency", value=f"{round(self.bot.latency * 1000)}ms")
         embed.add_field(name="Invite",
                         value=f"[Click Here](https://discordapp.com/oauth2/authorize?client_id={self.bot.user.id}&scope=bot&permissions=268905542)")
-        embed.set_footer(text="Momento © 2020 | Powered by discord.py")
+        embed.set_footer(text="Momento © 2021 | Powered by discord.py")
         await ctx.send(embed=embed)
 
     @commands.command(aliases=['sinfo', 'guildinfo'])

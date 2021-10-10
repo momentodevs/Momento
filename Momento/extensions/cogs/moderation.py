@@ -12,7 +12,7 @@ from discord.ext.commands.converter import Converter, MemberConverter
 from discord.ext.commands.errors import BadArgument, CheckFailure
 from discord.member import Member
 from discord.message import Message
-from classes import pcolours
+from .classes import pcolours
 
 
 profanity.load_censor_words()

@@ -8,7 +8,7 @@ from discord.ext.commands import Cog
 from discord import utils
 from datetime import datetime
 import math
-from classes import pcolours
+from .classes import pcolours
 
 
 class PlayerStatsTracker(Cog):

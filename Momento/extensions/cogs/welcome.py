@@ -7,7 +7,7 @@ from discord.ext.commands.cog import Cog
 from discord.utils import get
 from db import db
 import datetime
-from classes import pcolours
+from .classes import pcolours
 
 
 
