@@ -13,7 +13,7 @@ class Information(Cog):
     def __init__(self, bot: AutoShardedBot):
         """Main Commands"""
         self.bot = bot
-        self.bot.db = self.db
+        self.bot.db = bot.db
         self.process = psutil.Process()
 
     @commands.command(name="info")
