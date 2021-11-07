@@ -1,10 +1,10 @@
 aiohttp==3.7.4.post0
 better_profanity==0.7.0
 db==0.1.1
-discord==1.7.3
+discord.py==1.7.3
 jthon==1.0.2
 mysql_connector_repackaged==0.3.1
 orator==0.9.9
 psutil==5.8.0
-PyYAML==5.4.1
+PyYAML==6.0
 toml==0.10.2
