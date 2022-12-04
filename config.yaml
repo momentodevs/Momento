@@ -1,5 +1,5 @@
 discord:
-    TOKEN: NzM0MzUxMzM2Njc3ODM0Nzky.GhFAGo.f8IH8zxLG5HQSWFq7ZJml6mQHMNR2zWuBoHOUw
+    TOKEN: DISCORD_BOT_TOKEN
 databases:
     default: postgres
     sqlite:
