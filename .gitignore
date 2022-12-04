@@ -108,7 +108,7 @@ config.toml
 config.yaml
 env/
 venv/
-ENV/
+env/
 env.bak/
 venv.bak/
 

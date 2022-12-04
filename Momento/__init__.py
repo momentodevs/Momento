@@ -61,30 +61,30 @@ def collect_extensions():
 
 
 # load cogs and commands from the bot.extensions folder
-def load_extensions():
-    bot.load_extension('jishaku')
+async def load_extensions():
+    await bot.load_extension('jishaku')
     for extension in collect_extensions():
         try:
-            bot.load_extension(extension)
+            await bot.load_extension(extension)
             print(f"Loaded {extension}")
         except Exception as e:
             print(f"Failed to load extension {extension}\n{e}")
     print()
 
 
-def run():
+async def run():
     # Load bot utilities if enabled in the config
     utils = config.get("config", {}).get("utils", {})
     from .utils import Bot_Logging, Bot_Settings, Bot_Utils
 
     if utils.get("bot_logging", True):
-        bot.add_cog(Bot_Logging.Bot_Logging(bot))
+        await bot.add_cog(Bot_Logging.Bot_Logging(bot))
     if utils.get("bot_settings", True):
-        bot.add_cog(Bot_Settings.Bot_Settings(bot))
+        await bot.add_cog(Bot_Settings.Bot_Settings(bot))
     if utils.get("bot_utils", True):
-        bot.add_cog(Bot_Utils.Bot_Utils(bot))
+        await bot.add_cog(Bot_Utils.Bot_Utils(bot))
 
-    load_extensions()
+    await load_extensions()
 
     # Run the bot
-    bot.run(config.get("discord").get("TOKEN"))
+    await bot.run(config.get("discord").get("TOKEN"))

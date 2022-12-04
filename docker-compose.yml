@@ -1,0 +1,19 @@
+# create a docker-compose file for python 3.10 and install dependencies
+version: '3'
+services:
+  python:
+    image: python:3.10
+    volumes:
+      - .:/app
+    working_dir: /app
+    command: pip install -r requirements.txt && python main
+  postgres:
+    image: postgres:13
+    environment:
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_USER: momento
+      POSTGRES_DB: momento
+    ports:
+      - 5432:5432
+    volumes:
+      - postgres:/var/lib/postgresql/data

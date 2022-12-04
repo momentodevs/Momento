@@ -11,7 +11,7 @@ class BasicBot(AutoShardedBot):
         super().__init__(**kwargs)
         self.db = kwargs.get("db")
         self.settings = kwargs.get("settings")
-        self.aiohttp = ClientSession(loop=self.loop)
+        # self.aiohttp = ClientSession(loop=self.loop)
 
     def __setattr__(self, name, value):
         if name in reserved and hasattr(self, name):
