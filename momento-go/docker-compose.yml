@@ -1,54 +1,19 @@
-version: '3.8'
-
+# create a docker-compose file for python 3.10 and install dependencies
+version: '3'
 services:
+  python:
+    image: python:3.10
+    volumes:
+      - .:/app
+    working_dir: /app
+    command: pip install -r requirements.txt && python main
   postgres:
-    image: postgres:16-alpine
-    container_name: momento-db
-    restart: unless-stopped
+    image: postgres:13
     environment:
-      - POSTGRES_DB=momento
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=${DB_PASSWORD}
-    volumes:
-      - postgres-data:/var/lib/postgresql/data
-    networks:
-      - momento-network
-
-  lavalink:
-    image: ghcr.io/lavalink-devs/lavalink:4-alpine
-    container_name: momento-lavalink
-    restart: unless-stopped
-    environment:
-      - _JAVA_OPTIONS=-Xmx1G
-      - LAVALINK_SERVER_PASSWORD=${LAVALINK_PASSWORD}
-    volumes:
-      - ./configs/application.yml:/opt/Lavalink/application.yml
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_USER: momento
+      POSTGRES_DB: momento
     ports:
-      - "2333:2333"
-    networks:
-      - momento-network
-
-  momento:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    container_name: momento-bot
-    restart: unless-stopped
-    env_file:
-      - .env
+      - 5432:5432
     volumes:
-      - ./configs:/configs
-      - ./logs:/logs
-      - momento-data:/app/data
-    depends_on:
-      - postgres
-      - lavalink
-    networks:
-      - momento-network
-
-networks:
-  momento-network:
-    driver: bridge
-
-volumes:
-  postgres-data:
+      - postgres:/var/lib/postgresql/data
