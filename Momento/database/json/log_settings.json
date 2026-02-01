@@ -1,9 +1,0 @@
-{
-    "log_command": false,
-    "log_command_error": false,
-    "log_error": false,
-    "log_level": 20,
-    "log_message": false,
-    "log_message_edit": false,
-    "traceback": false
-}
