@@ -1,0 +1,41 @@
+# Binaries
+bin/
+*.exe
+*.dll
+*.so
+*.dylib
+*.test
+*.out
+
+# Test binary
+momento
+
+# Go workspace file
+go.work
+
+# Dependency directories
+vendor/
+
+# Config files with sensitive data
+configs/config.yaml
+configs/application.yml
+.env
+
+# Logs
+*.log
+logs/
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Test coverage
+coverage.out
+coverage.html

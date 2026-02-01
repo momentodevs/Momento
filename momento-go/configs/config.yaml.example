@@ -1,0 +1,43 @@
+discord:
+  token: ""  # DISCORD_TOKEN environment variable recommended
+  owner_id: ""  # Your Discord user ID
+  coowners: []  # List of co-owner IDs
+  command_prefix: ["m?"]
+  intents:
+    - guilds
+    - guild_messages
+    - guild_members
+    - message_content
+    - voice_states
+
+database:
+  type: "postgres"  # Options: postgres, mysql, sqlite
+  host: "localhost"
+  port: 5432
+  database: "momento"
+  user: "postgres"
+  password: ""  # DB_PASSWORD environment variable recommended
+  sslmode: "disable"
+
+bot:
+  description: "Momento, A Multipurpose, opensource discord bot hosted 24/7"
+  traceback: false
+  pm_help: false
+
+lavalink:
+  host: "localhost"
+  port: 2333
+  password: "youshallnotpass"  # LAVALINK_PASSWORD environment variable recommended
+  nodes:
+    - name: "default"
+      host: "localhost"
+      port: 2333
+      password: "youshallnotpass"
+      region: "us-east"
+
+logging:
+  level: "info"  # Options: debug, info, warn, error
+  file: "discord.log"
+  max_size: 100  # MB
+  max_age: 30  # days
+  max_backups: 3
