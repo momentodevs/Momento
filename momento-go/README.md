@@ -45,23 +45,19 @@ cd momento-go
 ```bash
 cp configs/config.yaml.example configs/config.yaml
 cp .env.example .env
+cp configs/application.yml.example configs/application.yml
 ```
 
 3. Edit configuration:
 ```bash
+# Edit bot configuration
 nano configs/config.yaml  # Update bot token, database, and other settings
-nano .env  # Add sensitive data
-```
 
-4. Run migrations:
-```bash
-make migrate-up
-```
+# Set environment variables (IMPORTANT!)
+nano .env  # Add sensitive data (DISCORD_TOKEN, DB_PASSWORD, LAVALINK_PASSWORD)
 
-5. Build and run:
-```bash
-make build
-./bin/momento -config configs/config.yaml
+# Edit Lavalink configuration (optional, has defaults)
+nano configs/application.yml  # Update Lavalink settings if needed
 ```
 
 ## Docker Deployment
