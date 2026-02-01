@@ -1,0 +1,121 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: momento-db
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 3
+      resources:
+        limits:
+          cpus: '1.0'
+          memory: 1G
+        reservations:
+          cpus: '0.25'
+          memory: 256M
+    environment:
+      - POSTGRES_DB=momento
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD_FILE=/run/secrets/db_password
+    secrets:
+      - db_password
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    networks:
+      - momento-network
+
+  lavalink:
+    image: ghcr.io/lavalink-devs/lavalink:4-alpine
+    container_name: momento-lavalink
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 3
+      resources:
+        limits:
+          cpus: '1.0'
+          memory: 2G
+        reservations:
+          cpus: '0.5'
+          memory: 1G
+    environment:
+      - _JAVA_OPTIONS=-Xmx1G
+      - LAVALINK_SERVER_PASSWORD_FILE=/run/secrets/lavalink_password
+    secrets:
+      - lavalink_password
+    configs:
+      - lavalink_config
+    ports:
+      - target: 2333
+        published: 2333
+    networks:
+      - momento-network
+
+  momento:
+    image: momento-bot:latest
+    container_name: momento-bot
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 3
+      resources:
+        limits:
+          cpus: '2.0'
+          memory: 512M
+        reservations:
+          cpus: '0.5'
+          memory: 256M
+      environment:
+        - DISCORD_TOKEN_FILE=/run/secrets/discord_token
+        - DATABASE_TYPE=postgres
+        - DATABASE_HOST=postgres
+        - DATABASE_PORT=5432
+        - DATABASE_NAME=momento
+        - DATABASE_USER=postgres
+        - DATABASE_PASSWORD_FILE=/run/secrets/db_password
+        - LOG_LEVEL=info
+        - LAVALINK_HOST=lavalink
+        - LAVALINK_PORT=2333
+        - LAVALINK_PASSWORD_FILE=/run/secrets/lavalink_password
+      secrets:
+        - discord_token
+        - db_password
+        - lavalink_password
+      volumes:
+        - configs-volume:/configs
+        - logs-volume:/logs
+      depends_on:
+        - postgres
+        - lavalink
+      networks:
+      - momento-network
+
+networks:
+  momento-network:
+    driver: overlay
+    attachable: true
+
+volumes:
+  postgres-data:
+  configs-volume:
+  logs-volume:
+
+secrets:
+  discord_token:
+    external: true
+  db_password:
+    external: true
+  lavalink_password:
+    external: true
+
+configs:
+  lavalink_config:
+    file: configs/application.yml.example

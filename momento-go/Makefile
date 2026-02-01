@@ -1,4 +1,4 @@
-.PHONY: build test test-race lint fmt clean run docker-build docker-up docker-down docker-deploy help
+.PHONY: build test test-race lint fmt clean run docker-build docker-up docker-down docker-logs docker-clean help
 
 # Build the application
 build:
@@ -43,23 +43,34 @@ run:
 # Build Docker image
 docker-build:
 	@echo "Building Docker image..."
-	@docker build -f deployments/docker/Dockerfile -t momento-bot:latest .
+	@docker compose build
 	@echo "Docker build complete"
 
 # Start development environment
 docker-up:
 	@echo "Starting development environment..."
-	@docker-compose -f deployments/docker/docker-compose.yml up -d
+	@docker compose up -d
 
 # Stop development environment
 docker-down:
 	@echo "Stopping development environment..."
-	@docker-compose -f deployments/docker/docker-compose.yml down
+	@docker compose down
+
+# View logs
+docker-logs:
+	@docker compose logs -f momento
+
+# Clean up volumes and containers
+docker-clean:
+	@echo "Cleaning up Docker resources..."
+	@docker compose down -v
+	@docker volume rm momento-data postgres-data 2>/dev/null || true
+	@echo "Clean complete"
 
 # Deploy to swarm
 docker-deploy:
 	@echo "Deploying to Docker Swarm..."
-	@docker stack deploy -c deployments/docker/docker-stack.yml momento
+	@docker stack deploy -c docker-stack.yml momento
 
 # Run database migrations
 migrate-up:

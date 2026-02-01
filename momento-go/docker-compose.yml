@@ -1,33 +1,8 @@
-services:
-  momento:
-    build:
-      context: ../../
-      dockerfile: deployments/docker/Dockerfile
-      args:
-        - BUILDKIT_PROGRESS=plain
-    container_name: momento-bot
-    restart: unless-stopped
-    environment:
-      - DISCORD_TOKEN=${DISCORD_TOKEN}
-      - DATABASE_TYPE=postgres
-      - DATABASE_HOST=postgres
-      - DATABASE_PORT=5432
-      - DATABASE_NAME=momento
-      - DATABASE_USER=postgres
-      - DATABASE_PASSWORD=${DB_PASSWORD}
-      - LOG_LEVEL=debug
-      - LAVALINK_PASSWORD=${LAVALINK_PASSWORD}
-    volumes:
-      - ./configs:/configs
-      - ./logs:/logs
-    depends_on:
-      - postgres
-      - lavalink
-    networks:
-      - momento-network
+version: '3.8'
 
+services:
   postgres:
-    image: postgres:15-alpine
+    image: postgres:16-alpine
     container_name: momento-db
     restart: unless-stopped
     environment:
@@ -50,6 +25,24 @@ services:
       - ./configs/application.yml:/opt/Lavalink/application.yml
     ports:
       - "2333:2333"
+    networks:
+      - momento-network
+
+  momento:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: momento-bot
+    restart: unless-stopped
+    env_file:
+      - .env
+    volumes:
+      - ./configs:/configs
+      - ./logs:/logs
+      - momento-data:/app/data
+    depends_on:
+      - postgres
+      - lavalink
     networks:
       - momento-network
 
