@@ -1,0 +1,58 @@
+project_name: Momento
+before:
+  hooks:
+    - go mod tidy
+    - go mod download
+builds:
+  - env:
+      - CGO_ENABLED=0
+    goos:
+      - linux
+      - darwin
+      - windows
+    goarch:
+      - amd64
+      - arm64
+    ldflags:
+      - -s -w -X main.version={{.Version}} -X main.commit={{.Commit}} -X main.date={{.Date}}
+    main: .
+    binary: Momento
+    flags:
+      - -trimpath
+archives:
+  - format: tar.gz
+    name_template: "{{ .ProjectName }}_{{ .Version }}_{{ .Os }}_{{ .Arch }}"
+    format_overrides:
+      - goos: windows
+        format: zip
+checksum:
+  name_template: 'checksums.txt'
+  algorithm: sha256
+release:
+  github:
+    owner: momentodevs
+    name: Momento
+  draft: false
+  prerelease: false
+  mode: replace
+changelog:
+  sort: asc
+  filters:
+    exclude:
+      - '^docs:'
+      - '^test:'
+      - '^chore:'
+      - Merge pull request
+      - Merge branch
+  groups:
+    - title: Features
+      regexp: "^feat:.*"
+      order: 0
+    - title: Bug Fixes
+      regexp: "^fix:.*"
+      order: 1
+    - title: Documentation
+      regexp: "^docs:.*"
+      order: 2
+    - title: Other Changes
+      order: 999

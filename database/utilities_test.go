@@ -3,9 +3,9 @@ package database
 import "testing"
 
 func TestEncodeSegments(t *testing.T) {
-	result := EncodeSegments(map[int]bool{0: true, 1: true})
-	if result != "0,1" {
-		t.Error("Encoding segments failed. Expected 0,1, got", result)
+	result := EncodeSegments(map[int]struct{}{0: {}, 1: {}})
+	if result != "0,1" && result != "1,0" {
+		t.Error("Encoding segments failed. Expected 0,1 or 1,0, got", result)
 	}
 }
 
