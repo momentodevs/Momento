@@ -130,3 +130,13 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+
+# Go
+Momento
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+*.test
+*.out
