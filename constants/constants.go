@@ -1,0 +1,90 @@
+package constants
+
+const (
+	CachePath      = "./audio_cache/"
+	AudioExtension = ".dca"
+)
+
+// Titles for embeds
+const (
+	EnqueuedTitle     = "Enqueued"
+	ErrorTitle        = "Error"
+	SkipTitle         = "Skipped"
+	QueueTitle        = "Queue"
+	PauseTitle        = "Pause"
+	DisconnectedTitle = "Disconnected"
+	GotoTitle         = "Goto"
+	StatsTitle        = "Stats™"
+	RestartTitle      = "Restart"
+	SuccessfulTitle   = "Successful"
+	CommandsTitle     = "Commands"
+	BlacklistTitle    = "Blacklist"
+	ResumeTitle       = "Resume"
+	DjTitle           = "DJ"
+	WebUITitle        = "Web UI"
+	ShuffleTitle      = "Shuffle"
+	NowPlayingTitle   = "Now Playing"
+)
+
+// Messages for embeds
+const (
+	// Voice channel
+	NotInVC    = "You're not in a voice channel in this guild!"
+	CantJoinVC = "Can't join voice channel!"
+
+	// Queue
+	QueueCleared    = "Queue cleared!"
+	QueueEmpty      = "Queue is empty!"
+	QueueShuffled   = "Queue shuffled!"
+	TooFewToShuffle = "Need at least 2 songs in the queue to shuffle!"
+
+	// Song status
+	Paused         = "Paused the current song"
+	AlreadyPaused  = "The song is already paused"
+	Resumed        = "Resumed the current song"
+	AlreadyResumed = "The song is already playing"
+	SkippedTo      = "Skipped to "
+	NotPlayingSong = "No song is currently playing!"
+
+	// Custom commands
+	CommandAdded   = "Custom command added!"
+	CommandRemoved = "Custom command removed!"
+	CommandInvalid = "Not a valid custom command!\nSee /listcustom for a list of custom commands."
+
+	// Errors
+	NotCached           = "Song is not cached!"
+	InvalidURL          = "Invalid URL!"
+	StillPlaying        = "Can't disconnect the bot!\nStill playing in a voice channel."
+	GotoInvalid         = "Wrong format.\nValid formats are: 1h10m3s, 3m, 4m10s..."
+	NothingPlaying      = "No song playing!"
+	SpotifyError        = "Can't get info about spotify link!\nError code: "
+	SpotifyNotConfigure = "Spotify is not configured!\nSee the documentation for more info."
+	CommandExists       = "Command already exists!"
+	CommandNotExists    = "Command doesn't exist!"
+	ErrorDM             = "Commands are not available in DM!"
+
+	// Feedback
+	Disconnected = "Bye-bye!"
+
+	// DJ
+	DjEnabled     = "DJ mode enabled!"
+	DjDisabled    = "DJ mode disabled!"
+	DjNot         = "User is not a DJ, and DJ mode is enabled!"
+	DjRoleChanged = "DJ role changed!"
+	DjRoleEqual   = "DJ role is already that role!"
+
+	// Blacklist
+	BlacklistAdded       = "User added to the blacklist!"
+	BlacklistRemoved     = "User removed from the blacklist!"
+	UserInBlacklist      = "User is in blacklist!"
+	ServerInBlacklist    = "Server is in blacklist!"
+	ServerNotInWhitelist = "Server is not in whitelist!"
+
+	// Update
+	UpdateQueued = "Requested data will be updated next time the song is played!"
+)
+
+const (
+	// How many DCA frames are needed for a second. It's not perfect, but good enough.
+	FrameSeconds = 50.00067787
+)

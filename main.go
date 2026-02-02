@@ -1,0 +1,359 @@
+package main
+
+import (
+	e "embed"
+	"os"
+	"os/signal"
+	"strconv"
+	"strings"
+	"sync"
+	"syscall"
+	"time"
+
+	"github.com/momentodevs/Momento/api"
+	"github.com/momentodevs/Momento/constants"
+	"github.com/momentodevs/Momento/database/mysql"
+	"github.com/momentodevs/Momento/database/sqlite"
+	"github.com/momentodevs/Momento/embed"
+	"github.com/momentodevs/Momento/manager"
+	"github.com/momentodevs/Momento/spotify"
+	"github.com/momentodevs/Momento/youtube"
+	"github.com/bwmarrin/discordgo"
+	"github.com/bwmarrin/lit"
+	"github.com/gin-gonic/gin"
+	"github.com/kkyr/fig"
+)
+
+var (
+	// Holds all the info about a server
+	server = make(map[string]*manager.Server)
+	// String for storing the owners of the bot
+	owners map[string]struct{}
+	// Discord bot token
+	token string
+	// Cache for the user blacklist
+	blacklist *sync.Map
+	// Clients
+	clients manager.Clients
+	// Web API
+	webApi *api.Api
+	// Array of long lived tokens
+	longLivedTokens []apiToken
+	//go:embed all:web/build/*
+	buildFS e.FS
+	// Origin for CORS and link generation
+	origin string
+	// Server mutex
+	serverMutex sync.RWMutex
+	// If set to true, the bot will only respond to commands coming from guilds in the guild list
+	whitelist bool
+	// List of guilds the bot will respond to
+	guildList *sync.Map
+)
+
+func init() {
+	lit.LogLevel = lit.LogError
+	gin.SetMode(gin.ReleaseMode)
+
+	var cfg Config
+	err := fig.Load(&cfg, fig.File("config.yml"), fig.Dirs(".", "./data"))
+	if err != nil {
+		lit.Error(err.Error())
+		return
+	}
+
+	// Config file found
+	token = cfg.Token
+
+	owners = make(map[string]struct{}, len(cfg.Owner))
+	for _, o := range cfg.Owner {
+		owners[o] = struct{}{}
+	}
+
+	longLivedTokens = cfg.ApiTokens
+	origin = cfg.Origin
+
+	// Set lit.LogLevel to the given value
+	switch strings.ToLower(cfg.LogLevel) {
+	case "logwarning", "warning":
+		lit.LogLevel = lit.LogWarning
+
+	case "loginformational", "informational":
+		lit.LogLevel = lit.LogInformational
+
+	case "logdebug", "debug":
+		lit.LogLevel = lit.LogDebug
+	}
+
+	if cfg.ClientID != "" && cfg.ClientSecret != "" {
+		clients.Spotify, err = spotify.NewSpotify(cfg.ClientID, cfg.ClientSecret)
+		if err != nil {
+			lit.Error("spotify: couldn't get token: %s", err)
+		}
+	}
+
+	// Start the API, if enabled
+	if cfg.Address != "" {
+		webApi = api.NewApi(server, cfg.Address, owners, &clients, &buildFS, origin)
+	}
+
+	// Initialize the database
+	switch cfg.Driver {
+	case "sqlite", "sqlite3":
+		clients.Database = sqlite.NewDatabase(cfg.DSN)
+	case "mysql":
+		clients.Database = mysql.NewDatabase(cfg.DSN)
+	}
+
+	// And load custom commands from the db
+	commands, _ := clients.Database.GetCustomCommands()
+	for k := range commands {
+		if server[k] == nil {
+			initializeServer(k)
+		}
+
+		server[k].Custom = commands[k]
+	}
+
+	// Load the blacklist
+	blacklist, err = clients.Database.GetBlacklist()
+	if err != nil {
+		lit.Error("Error loading blacklist: %s", err)
+	}
+
+	// Load the DJ settings
+	dj, err := clients.Database.GetDJ()
+	if err != nil {
+		lit.Error("Error loading DJ settings: %s", err)
+	}
+
+	for k := range dj {
+		if server[k] == nil {
+			initializeServer(k)
+		}
+
+		server[k].DjMode = dj[k].Enabled
+		server[k].DjRole = dj[k].Role
+	}
+
+	// Load the whitelist
+	whitelist = cfg.WhiteList
+	guildList = &sync.Map{}
+	for _, g := range cfg.GuildList {
+		guildList.Store(g, struct{}{})
+	}
+
+	// Create folders used by the bot
+	if _, err = os.Stat(constants.CachePath); err != nil {
+		if err = os.Mkdir(constants.CachePath, 0755); err != nil {
+			lit.Error("Cannot create %s, %s", constants.CachePath, err)
+		}
+	}
+
+	// If yt-dlp is not terminated gracefully when downloading, it will leave a file called --Frag1
+	_ = os.Remove("--Frag1")
+
+	// Checks useful for knowing if every dependency exists
+	if manager.IsCommandNotAvailable("dca") {
+		lit.Error("Error: can't find dca!")
+	}
+
+	if manager.IsCommandNotAvailable("ffmpeg") {
+		lit.Error("Error: can't find ffmpeg!")
+	}
+
+	if manager.IsCommandNotAvailable("yt-dlp") {
+		lit.Error("Error: can't find yt-dlp!")
+	}
+
+	if cfg.YouTubeAPI != "" {
+		clients.Youtube, err = youtube.NewYoutube(cfg.YouTubeAPI)
+		if err != nil {
+			lit.Error("youtube: couldn't get client: %s", err)
+		}
+	}
+}
+
+func main() {
+	if token == "" {
+		lit.Error("No token provided. Please modify config.yml")
+		return
+	}
+
+	// Create a new Discord session using the provided bot token.
+	dg, err := discordgo.New("Bot " + token)
+	if err != nil {
+		lit.Error("Error creating Discord session: %s", err)
+		return
+	}
+
+	// Save the session
+	clients.Discord = dg
+
+	// Add events handler
+	dg.AddHandler(ready)
+	dg.AddHandler(guildCreate)
+	dg.AddHandler(guildDelete)
+	dg.AddHandler(voiceStateUpdate)
+	dg.AddHandler(guildMemberUpdate)
+	dg.AddHandler(interactionCreate)
+
+	// Initialize intents that we use
+	dg.Identify.Intents = discordgo.MakeIntent(discordgo.IntentsGuilds | discordgo.IntentsGuildVoiceStates)
+
+	// Reconnect in case of connection loss
+	dg.ShouldReconnectOnError = true
+	dg.ShouldReconnectVoiceOnSessionError = true
+
+	// Open the websocket and begin listening.
+	err = dg.Open()
+	if err != nil {
+		lit.Error("Error opening Discord session: %s", err)
+		return
+	}
+
+	// Register commands
+	_, err = dg.ApplicationCommandBulkOverwrite(dg.State.User.ID, "", commands)
+	if err != nil {
+		lit.Error("Can't register commands, %s", err)
+	}
+
+	// Start the web API, if enabled
+	if webApi != nil {
+		go webApi.HandleNotifications()
+
+		if len(longLivedTokens) > 0 {
+			lit.Info("Loading long lived tokens")
+			for _, t := range longLivedTokens {
+				userInfo := api.UserInfo{
+					LongLivedToken: t.Token,
+					Guild:          t.Guild,
+					TextChannel:    t.TextChannel,
+				}
+				user, _ := dg.User(t.UserID)
+				webApi.AddLongLivedToken(user, userInfo)
+			}
+		}
+	}
+
+	// Print guilds the bot is connected to
+	if lit.LogLevel == lit.LogDebug {
+		lit.Debug("Bot is connected to %d guilds.", len(dg.State.Guilds))
+
+		for _, g := range dg.State.Guilds {
+			lit.Debug("%s: %s", g.Name, g.ID)
+		}
+	}
+
+	// Wait here until CTRL-C or another term signal is received.
+	lit.Info("YADMB is now running. Press CTRL-C to exit.")
+	sc := make(chan os.Signal, 1)
+	signal.Notify(sc, syscall.SIGINT, syscall.SIGTERM, os.Interrupt)
+	<-sc
+
+	// Cleanly close down the Discord session.
+	_ = dg.Close()
+	// And the DB connection
+	clients.Database.Close()
+}
+
+func ready(s *discordgo.Session, _ *discordgo.Ready) {
+	// Set the playing status.
+	err := s.UpdateGameStatus(0, "Serving "+strconv.Itoa(len(s.State.Guilds))+" guilds!")
+	if err != nil {
+		lit.Error("Can't set status, %s", err)
+	}
+}
+
+// Initialize Server structure
+func guildCreate(s *discordgo.Session, e *discordgo.GuildCreate) {
+	initializeServer(e.ID)
+
+	ready(s, nil)
+}
+
+func guildDelete(s *discordgo.Session, e *discordgo.GuildDelete) {
+	if server[e.ID].IsPlaying() {
+		ClearAndExit(server[e.ID])
+	}
+
+	// Update the status
+	ready(s, nil)
+}
+
+// Update the voice channel when the bot is moved
+func voiceStateUpdate(s *discordgo.Session, v *discordgo.VoiceStateUpdate) {
+	// If the bot is moved to another channel
+	if v.UserID == s.State.User.ID && v.ChannelID == "" {
+		if server[v.GuildID].IsPlaying() {
+			// If the bot has been disconnected from the voice channel, reconnect it
+			err := server[v.GuildID].VC.Reconnect(s)
+			if err != nil {
+				lit.Error("Can't join voice channel, %s", err)
+			}
+		} else {
+			server[v.GuildID].VC.Disconnect()
+		}
+	}
+
+	// If the bot is alone in the voice channel, stop the music
+	if server[v.GuildID].VC.IsConnected() {
+		channel := server[v.GuildID].VC.GetChannelID()
+		if (v.ChannelID == channel || (v.BeforeUpdate != nil && v.BeforeUpdate.ChannelID == channel)) && countVoiceStates(s, v.GuildID, channel) == 0 {
+			go QuitIfEmptyVoiceChannel(server[v.GuildID])
+		}
+	}
+}
+
+func guildMemberUpdate(s *discordgo.Session, m *discordgo.GuildMemberUpdate) {
+	// If we've been timed out, stop the music
+	if m.User.ID == s.State.User.ID && m.CommunicationDisabledUntil != nil &&
+		m.CommunicationDisabledUntil.After(time.Now()) && server[m.GuildID].IsPlaying() {
+		ClearAndExit(server[m.GuildID])
+	}
+}
+
+func interactionCreate(s *discordgo.Session, i *discordgo.InteractionCreate) {
+	// Ignores commands from DM
+	if i.User == nil {
+		if _, ok := blacklist.Load(i.Member.User.ID); ok {
+			embed.SendAndDeleteEmbedInteraction(s, embed.NewEmbed().SetTitle(s.State.User.Username).AddField(constants.ErrorTitle,
+				constants.UserInBlacklist).
+				SetColor(0x7289DA).MessageEmbed, i.Interaction, time.Second*3, nil)
+		} else {
+			if whitelist {
+				// Whitelist mode: check if the guild is in the list
+				if _, ok = guildList.Load(i.GuildID); ok {
+					if h, ok := commandHandlers[i.ApplicationCommandData().Name]; ok {
+						h(s, i)
+					}
+				} else {
+					embed.SendAndDeleteEmbedInteraction(s, embed.NewEmbed().SetTitle(s.State.User.Username).AddField(constants.ErrorTitle,
+						constants.ServerNotInWhitelist).
+						SetColor(0x7289DA).MessageEmbed, i.Interaction, time.Second*3, nil)
+				}
+			} else {
+				// Blacklist mode: check if the guild is not in the list
+				if _, ok = guildList.Load(i.GuildID); !ok {
+					if h, ok := commandHandlers[i.ApplicationCommandData().Name]; ok {
+						h(s, i)
+					}
+				} else {
+					embed.SendAndDeleteEmbedInteraction(s, embed.NewEmbed().SetTitle(s.State.User.Username).AddField(constants.ErrorTitle,
+						constants.ServerInBlacklist).
+						SetColor(0x7289DA).MessageEmbed, i.Interaction, time.Second*3, nil)
+				}
+			}
+		}
+	} else {
+		if _, ok := blacklist.Load(i.User.ID); ok {
+			embed.SendAndDeleteEmbedInteraction(s, embed.NewEmbed().SetTitle(s.State.User.Username).AddField(constants.ErrorTitle,
+				constants.UserInBlacklist).
+				SetColor(0x7289DA).MessageEmbed, i.Interaction, time.Second*3, nil)
+		} else {
+			embed.SendAndDeleteEmbedInteraction(s, embed.NewEmbed().SetTitle(s.State.User.Username).AddField(constants.ErrorTitle,
+				constants.ErrorDM).
+				SetColor(0x7289DA).MessageEmbed, i.Interaction, time.Second*15, nil)
+		}
+	}
+}

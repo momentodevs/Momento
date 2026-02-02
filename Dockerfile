@@ -1,0 +1,33 @@
+FROM --platform=$BUILDPLATFORM golang:alpine AS build
+
+RUN apk add --no-cache git
+RUN apk add --no-cache wget
+RUN apk add --no-cache nodejs
+RUN apk add --no-cache pnpm
+
+COPY . /momento
+
+WORKDIR /momento/web
+RUN pnpm install
+RUN pnpm run build
+
+WORKDIR /momento
+ARG TARGETOS
+ARG TARGETARCH
+RUN GOOS=$TARGETOS GOARCH=$TARGETARCH CGO_ENABLED=0 go mod download
+RUN GOOS=$TARGETOS GOARCH=$TARGETARCH CGO_ENABLED=0 go build -trimpath -ldflags "-s -w" -o momento
+
+FROM alpine
+
+RUN apk add --no-cache ffmpeg
+RUN apk add --no-cache python3
+RUN apk add --no-cache gcompat
+RUN apk add --no-cache deno
+
+COPY --from=thetipo01/dca /usr/bin/dca /usr/bin/
+
+RUN wget https://github.com/yt-dlp/yt-dlp/releases/latest/download/yt-dlp -O /usr/bin/yt-dlp && chmod a+rx /usr/bin/yt-dlp
+
+COPY --from=build /momento/momento /usr/bin/
+
+CMD ["momento"]

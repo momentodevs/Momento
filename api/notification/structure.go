@@ -1,0 +1,36 @@
+package notification
+
+import (
+	"github.com/momentodevs/Momento/queue"
+)
+
+const (
+	// NewSongs notification for a new song added to the queue
+	NewSongs Notification = iota
+	// Skip notification for a song being skipped
+	Skip
+	// Pause notification for a song being paused
+	Pause
+	// Resume notification for a song being resumed
+	Resume
+	// Clear notification for a queue being cleared
+	Clear
+	// Finished notification for a queue being finished
+	Finished
+	// Playing notification for a song starting to play
+	Playing
+	// PrioritySong notification for a song being added to the queue with priority
+	PrioritySong
+	// LoopFinished notification for a song finishing a loop
+	LoopFinished
+	// Shuffle notification for a queue being shuffled
+	Shuffle
+)
+
+type Notification int8
+
+type NotificationMessage struct {
+	Notification Notification    `json:"notification"`
+	Songs        []queue.Element `json:"song,omitempty"`
+	Guild        string          `json:"-"`
+}
