@@ -30,4 +30,4 @@ See the [wiki](https://momentodevs.github.io/Momento/install.html)
 
 # Credits
 
-Thanks to TheTipo01 for the amazing kickstart for momento's revival. Much appreciated
+Thanks to [TheTipo01](https://github.com/TheTipo01/YADMB) for the amazing kickstart for momento's revival. Much appreciated

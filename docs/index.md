@@ -22,3 +22,7 @@ A music bot written in go
 - [DCA](https://github.com/bwmarrin/dca/tree/master/cmd/dca)
 - [yt-dlp](https://github.com/yt-dlp/yt-dlp)
 - [ffmpeg](https://ffmpeg.org/download.html)
+
+# Credits
+
+Thanks to [TheTipo01](https://github.com/TheTipo01/YADMB) for the amazing kickstart for momento's revival. Much appreciated
